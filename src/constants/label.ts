@@ -114,7 +114,7 @@ export const RelatedResourcesLabel: AllResourcesLabelType[] = [
         hasContent: true,
       },
       {
-        id: "1247",
+        id: "1287",
         title: "Last Modified By ID",
         tooltipContent: "Tooltip Content Last Modified By ID",
         icon: File,
@@ -158,7 +158,7 @@ export const RelatedResourcesLabel: AllResourcesLabelType[] = [
     ],
   },
   {
-    id: "1244",
+    id: "1284",
     parentId: "1246",
     heading: "Relationship Fields",
     nestedContent: [

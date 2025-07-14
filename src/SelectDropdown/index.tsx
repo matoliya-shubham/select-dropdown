@@ -11,40 +11,10 @@ import { AddResourceModal } from "./AddResourceModal";
 import { PlusIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ResourceContent } from "./ResourceContent";
-import type { BreadcrumbItemType } from "@/types/DropdownContentType";
 
 export const SelectDropdown = () => {
   const [open, setOpen] = useState(false);
-  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItemType[]>([
-    { title: "All Resources", id: "root" },
-  ]);
-  const [currentView, setCurrentView] = useState("root");
-
   const _onOpenChange = (open: boolean) => setOpen(open);
-
-  // Handle adding a new breadcrumb item and update the current view
-  const handleAddBreadcrumb = (item: BreadcrumbItemType) => {
-    setBreadcrumbs((prev) => {
-      // Check if this item already exists in the breadcrumbs
-      const existingIndex = prev.findIndex((crumb) => crumb.id === item.id);
-
-      if (existingIndex !== -1) {
-        // If it exists, truncate the array up to this item
-        return prev.slice(0, existingIndex + 1);
-      } else {
-        // Otherwise add it to the end
-        return [...prev, item];
-      }
-    });
-    setCurrentView(item.id);
-  };
-
-  // Handle clicking on a breadcrumb to navigate
-  const handleBreadcrumbClick = (index: number) => {
-    const item = breadcrumbs[index];
-    setBreadcrumbs((prev) => prev.slice(0, index + 1));
-    setCurrentView(item.id);
-  };
 
   return (
     <Popover open={open} onOpenChange={_onOpenChange}>
@@ -66,15 +36,9 @@ export const SelectDropdown = () => {
           placeholder="Search"
           onChange={(value) => console.log(value)}
         />
-        <ResourceBreadCrumb
-          breadcrumbs={breadcrumbs}
-          onBreadcrumbClick={handleBreadcrumbClick}
-        />
+        <ResourceBreadCrumb />
         <ScrollArea className="h-[20rem] flex-1">
-          <ResourceContent
-            currentView={currentView}
-            onItemClick={handleAddBreadcrumb}
-          />
+          <ResourceContent />
         </ScrollArea>
         <AddResourceModal
           title={

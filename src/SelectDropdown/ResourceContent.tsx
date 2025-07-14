@@ -3,26 +3,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { AllResourcesLabel, RelatedResourcesLabel } from "@/constants/label";
 import { ChevronRight, Info } from "lucide-react";
-import type {
-  AllResourcesLabelType,
-  BreadcrumbItemType,
-} from "@/types/DropdownContentType";
+import { useResourceContent } from "@/hooks/useResourceContent";
 
-interface ResourceContentProps {
-  currentView: string;
-  onItemClick: (item: BreadcrumbItemType) => void;
-}
-
-const RootResourceStructure = ({
-  onItemClick,
-  itemArray,
-}: {
-  onItemClick: (item: BreadcrumbItemType) => void;
-  itemArray: AllResourcesLabelType[];
-}) => {
-  if (!itemArray || itemArray.length === 0) {
+export const ResourceContent = () => {
+  const { handleAddBreadcrumb, displayContent } = useResourceContent();
+  if (!displayContent || displayContent.length === 0) {
     return (
       <div className="p-4">
         <p>No content available for this view.</p>
@@ -31,7 +17,7 @@ const RootResourceStructure = ({
   }
   return (
     <div className="flex flex-col">
-      {itemArray.map((item) => {
+      {displayContent.map((item) => {
         return (
           <div key={item.id}>
             <h2 className="p-2 font-semibold pl-4">{item.heading}</h2>
@@ -45,7 +31,7 @@ const RootResourceStructure = ({
                     }`}
                     onClick={() => {
                       if (nestedItem.hasContent) {
-                        onItemClick({
+                        handleAddBreadcrumb({
                           title: nestedItem.title,
                           id: nestedItem.id,
                         });
@@ -84,33 +70,4 @@ const RootResourceStructure = ({
       })}
     </div>
   );
-};
-export const ResourceContent = ({
-  currentView,
-  onItemClick,
-}: ResourceContentProps) => {
-  // Function to render content based on the current view
-  const renderContent = () => {
-    // Root view shows all resources
-    if (currentView === "root") {
-      return (
-        <RootResourceStructure
-          onItemClick={onItemClick}
-          itemArray={AllResourcesLabel}
-        />
-      );
-    } else {
-      const relatedResources =
-        RelatedResourcesLabel.filter((item) => item.parentId === currentView) ||
-        [];
-      return (
-        <RootResourceStructure
-          onItemClick={onItemClick}
-          itemArray={relatedResources}
-        />
-      );
-    }
-  };
-
-  return renderContent();
 };

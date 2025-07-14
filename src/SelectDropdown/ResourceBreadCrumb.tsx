@@ -6,17 +6,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import type { BreadcrumbItemType } from "@/types/DropdownContentType";
+import { useResourceContent } from "@/hooks/useResourceContent";
 
-interface ResourceBreadCrumbProps {
-  breadcrumbs: BreadcrumbItemType[];
-  onBreadcrumbClick: (index: number) => void;
-}
+export const ResourceBreadCrumb = () => {
+  const { breadcrumbs, handleBreadcrumbClick } = useResourceContent();
 
-export const ResourceBreadCrumb = ({
-  breadcrumbs,
-  onBreadcrumbClick,
-}: ResourceBreadCrumbProps) => {
   return (
     <div className="p-2 px-4 border-b bg-gray-100">
       <Breadcrumb>
@@ -28,7 +22,7 @@ export const ResourceBreadCrumb = ({
                   <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink
-                    onClick={() => onBreadcrumbClick(index)}
+                    onClick={() => handleBreadcrumbClick(index)}
                     className="cursor-pointer hover:underline"
                   >
                     {crumb.title}
