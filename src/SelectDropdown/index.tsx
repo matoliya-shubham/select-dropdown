@@ -22,7 +22,7 @@ export const SelectDropdown = () => {
 
   const _onOpenChange = (open: boolean) => setOpen(open);
 
-  // Handle adding a new breadcrumb item
+  // Handle adding a new breadcrumb item and update the current view
   const handleAddBreadcrumb = (item: BreadcrumbItemType) => {
     setBreadcrumbs((prev) => {
       // Check if this item already exists in the breadcrumbs
