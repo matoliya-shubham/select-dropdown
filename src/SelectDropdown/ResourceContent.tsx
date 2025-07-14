@@ -3,24 +3,54 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { AllResourcesLabel } from "@/constants/label";
+import { AllResourcesLabel, RelatedResourcesLabel } from "@/constants/label";
 import { ChevronRight, Info } from "lucide-react";
+import type {
+  AllResourcesLabelType,
+  BreadcrumbItemType,
+} from "@/types/DropdownContentType";
 
-export const ResourceContent = () => {
+interface ResourceContentProps {
+  currentView: string;
+  onItemClick: (item: BreadcrumbItemType) => void;
+}
+
+const RootResourceStructure = ({
+  onItemClick,
+  itemArray,
+}: {
+  onItemClick: (item: BreadcrumbItemType) => void;
+  itemArray: AllResourcesLabelType[];
+}) => {
+  if (!itemArray || itemArray.length === 0) {
+    return (
+      <div className="p-4">
+        <p>No content available for this view.</p>
+      </div>
+    );
+  }
   return (
-    <div className="flex flex-col ">
-      {AllResourcesLabel.map((item, index) => {
+    <div className="flex flex-col">
+      {itemArray.map((item) => {
         return (
-          <div key={index}>
+          <div key={item.id}>
             <h2 className="p-2 font-semibold pl-4">{item.heading}</h2>
-            <div className="flex flex-col ">
-              {item.nestedContent.map((nestedItem, nestedIndex) => {
+            <div className="flex flex-col">
+              {item.nestedContent.map((nestedItem) => {
                 return (
                   <div
-                    key={nestedIndex}
-                    className={`flex group items-center justify-between p-2 pl-10 borderpl-4 hover:bg-blue-50 hover:border-blue-500 pr-4 ${
-                      nestedItem.hasContent && "cursor-pointer"
+                    key={nestedItem.id}
+                    className={`flex group items-center justify-between p-2 pl-10 hover:bg-blue-50 hover:border-blue-500 pr-4 ${
+                      nestedItem.hasContent ? "cursor-pointer" : ""
                     }`}
+                    onClick={() => {
+                      if (nestedItem.hasContent) {
+                        onItemClick({
+                          title: nestedItem.title,
+                          id: nestedItem.id,
+                        });
+                      }
+                    }}
                   >
                     <div className="flex items-center gap-2">
                       {nestedItem.icon && (
@@ -54,4 +84,33 @@ export const ResourceContent = () => {
       })}
     </div>
   );
+};
+export const ResourceContent = ({
+  currentView,
+  onItemClick,
+}: ResourceContentProps) => {
+  // Function to render content based on the current view
+  const renderContent = () => {
+    // Root view shows all resources
+    if (currentView === "root") {
+      return (
+        <RootResourceStructure
+          onItemClick={onItemClick}
+          itemArray={AllResourcesLabel}
+        />
+      );
+    } else {
+      const relatedResources =
+        RelatedResourcesLabel.filter((item) => item.parentId === currentView) ||
+        [];
+      return (
+        <RootResourceStructure
+          onItemClick={onItemClick}
+          itemArray={relatedResources}
+        />
+      );
+    }
+  };
+
+  return renderContent();
 };

@@ -6,23 +6,38 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import type { BreadcrumbItemType } from "@/types/DropdownContentType";
 
-export const ResourceBreadCrumb = () => {
+interface ResourceBreadCrumbProps {
+  breadcrumbs: BreadcrumbItemType[];
+  onBreadcrumbClick: (index: number) => void;
+}
+
+export const ResourceBreadCrumb = ({
+  breadcrumbs,
+  onBreadcrumbClick,
+}: ResourceBreadCrumbProps) => {
   return (
-    <div className="flex items-center p-2 px-4 border-b bg-gray-100">
+    <div className="p-2 px-4 border-b bg-gray-100">
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink>All Resources</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink>Components</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
-          </BreadcrumbItem>
+          {breadcrumbs.map((crumb, index) => (
+            <div key={crumb.id} className="flex items-center gap-1">
+              <BreadcrumbItem>
+                {index === breadcrumbs.length - 1 ? (
+                  <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink
+                    onClick={() => onBreadcrumbClick(index)}
+                    className="cursor-pointer hover:underline"
+                  >
+                    {crumb.title}
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+            </div>
+          ))}
         </BreadcrumbList>
       </Breadcrumb>
     </div>
