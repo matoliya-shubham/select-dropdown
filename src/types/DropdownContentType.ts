@@ -1,5 +1,3 @@
-import type { LucideProps } from "lucide-react";
-
 export type BreadcrumbItemType = {
   title: string;
   id: string;
@@ -13,9 +11,14 @@ export type AllResourcesLabelType = {
     title: string;
     id: string;
     tooltipContent?: string;
-    icon?: React.ForwardRefExoticComponent<
-      Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-    >;
+    iconName?: string;
     hasContent: boolean;
   }[];
 };
+
+export const FormModeType = {
+  CREATE: "CREATE",
+  EDIT: "EDIT",
+} as const;
+
+export type FormModeType = (typeof FormModeType)[keyof typeof FormModeType];

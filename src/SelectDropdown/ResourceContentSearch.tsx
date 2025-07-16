@@ -40,16 +40,14 @@ export const RichDropdownMenuSearch = ({
         onBlur={onBlur}
         onKeyDown={onKeyDown}
       />
-      {value && clearSearch && (
-        <button
-          className="appearance-none bg-slate-100 rounded-full size-4 relative"
-          type="button"
+      {value && clearSearch ? (
+        <X
+          className="size-4 cursor-pointer absolute right-5 top-1/2 -translate-y-1/2 text-slate-400"
           onClick={clearSearch}
-        >
-          <X className="size-3 fill-neutral-light-80 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-        </button>
+        />
+      ) : (
+        <SearchIcon className="size-4 absolute right-5 top-1/2 -translate-y-1/2 text-slate-400" />
       )}
-      <SearchIcon className="size-4 absolute right-5 top-1/2 -translate-y-1/2 text-slate-400" />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { AddResourceForm } from "./AddResourceForm";
+import { useResourceContext } from "@/hooks/useResourceContext";
 
 export const AddResourceModal = ({
   title,
@@ -17,9 +18,10 @@ export const AddResourceModal = ({
   heading: string;
   description: string;
 }) => {
+  const { openFormModal, _onOpenFormModal } = useResourceContext();
   return (
     <div className="flex items-center border-t hover:bg-gray-100 cursor-pointer h-10">
-      <Dialog>
+      <Dialog open={openFormModal} onOpenChange={_onOpenFormModal}>
         <DialogTrigger className="cursor-pointer w-full p-4">
           {title}
         </DialogTrigger>

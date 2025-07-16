@@ -6,11 +6,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { useResourceContent } from "@/hooks/useResourceContent";
+import { useResourceContext } from "@/hooks/useResourceContext";
 
 export const ResourceBreadCrumb = () => {
-  const { breadcrumbs, handleBreadcrumbClick } = useResourceContent();
-
+  const { breadcrumbs, handleBreadcrumbClick } = useResourceContext();
   return (
     <div className="p-2 px-4 border-b bg-gray-100">
       <Breadcrumb>
