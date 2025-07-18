@@ -19,26 +19,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  IconMap,
-  ResourceCategoryOptions,
-  toastMessages,
-} from "@/constants/label";
-import { useResourceContext } from "@/hooks/useResourceContext";
-import { useResourceContentService } from "@/services/useResourceContentService";
-import { toast } from "sonner";
+import { IconMap } from "@/constants/label";
 import { FormModeType } from "@/types/DropdownContentType";
+import { useResourceContent } from "@/hooks/useResourceContent";
 
 export const AddResourceForm = () => {
   const {
+    resourceContent,
     displayContent,
-    fetchResources,
     selectedItem,
     formMode,
-    _onOpenFormModal,
+    handleOpenFormModal,
     isLoading,
-    setIsLoading,
-  } = useResourceContext();
+    updateResourceContent,
+  } = useResourceContent();
 
   const [itemId, nestedItemId] = selectedItem || [];
   const selectedNestedItem = displayContent
@@ -55,57 +49,13 @@ export const AddResourceForm = () => {
     resolver: zodResolver(addResourceSchema),
     defaultValues,
   });
-  const { updateResourceContent } = useResourceContentService();
 
   const handleSubmit = async (data: AddResourceSchema) => {
     try {
-      setIsLoading(true);
-      const itemToAdd = displayContent.find(
-        (item) => item.id === data.category
-      );
-      const nestedContent =
-        formMode === FormModeType.EDIT
-          ? itemToAdd?.nestedContent.filter(
-              (nestedItem) => nestedItem.id !== nestedItemId
-            ) || []
-          : itemToAdd?.nestedContent || [];
-      await updateResourceContent({
-        id: itemToAdd?.id || "",
-        parentId: itemToAdd?.parentId || "",
-        heading: itemToAdd?.heading || "",
-        nestedContent: [
-          ...nestedContent,
-          {
-            title: data.name,
-            id: crypto.randomUUID() || "",
-            hasContent: false,
-            iconName: data.icon,
-            tooltipContent: "",
-          },
-        ],
-      });
-      fetchResources();
-      toast.success(
-        formMode === FormModeType.EDIT
-          ? toastMessages.updateResourceSuccess
-          : toastMessages.addResourceSuccess,
-        {
-          position: "top-center",
-        }
-      );
-      _onOpenFormModal(false);
+      updateResourceContent(data);
+      handleOpenFormModal(false);
     } catch (error) {
       console.error("Error adding resource:", error);
-      toast.error(
-        formMode === FormModeType.EDIT
-          ? toastMessages.updateResourceError
-          : toastMessages.addResourceError,
-        {
-          position: "top-center",
-        }
-      );
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -176,14 +126,18 @@ export const AddResourceForm = () => {
                   Category <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    disabled={formMode === FormModeType.EDIT}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
                     <SelectTrigger className="w-full outline-none focus-visible:ring-blue-700 focus-visible:ring-[1px]">
                       <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {ResourceCategoryOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                      {resourceContent.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.heading}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -200,7 +154,11 @@ export const AddResourceForm = () => {
               className="cursor-pointer"
               disabled={isLoading}
             >
-              Submit
+              {isLoading
+                ? "Saving..."
+                : formMode === FormModeType.EDIT
+                ? "Create"
+                : "Update"}
             </Button>
           </div>
         </form>

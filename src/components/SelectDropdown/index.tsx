@@ -11,20 +11,19 @@ import { AddResourceModal } from "./AddResourceModal";
 import { PlusIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ResourceContent } from "./ResourceContent";
-import { ResourceProvider } from "@/context/ResourceContext";
-import { useResourceContext } from "@/hooks/useResourceContext";
+import { useResourceContent } from "@/hooks/useResourceContent";
 
 // Wrapper component to use context
 const ResourceDropdownContent = () => {
-  const { setSearchQuery, searchQuery } = useResourceContext();
+  const { searchQuery, handleSearch } = useResourceContent();
 
   return (
     <>
       <RichDropdownMenuSearch
         placeholder="Search resources..."
         value={searchQuery}
-        onChange={(value) => setSearchQuery(value)}
-        clearSearch={searchQuery ? () => setSearchQuery("") : undefined}
+        onChange={(value) => handleSearch(value)}
+        clearSearch={searchQuery ? () => handleSearch("") : undefined}
       />
       <ResourceBreadCrumb />
       <ScrollArea className="h-[20rem] flex-1">
@@ -48,25 +47,23 @@ export const SelectDropdown = () => {
   const _onOpenChange = (open: boolean) => setOpen(open);
 
   return (
-    <ResourceProvider>
-      <Popover open={open} onOpenChange={_onOpenChange}>
-        <PopoverTrigger asChild>
-          <div
-            className={cn(
-              "flex items-center gap-2 p-2 px-4 rounded-md border w-[35rem] cursor-pointer mt-[7rem]",
-              open && "rounded-b-none"
-            )}
-          >
-            Open
-          </div>
-        </PopoverTrigger>
-        <PopoverContent
-          side="bottom"
-          className="w-[35rem] flex flex-col rounded-none -mt-1 border-t-0 h-[30rem] max-h-[30rem] p-0"
+    <Popover open={open} onOpenChange={_onOpenChange}>
+      <PopoverTrigger asChild>
+        <div
+          className={cn(
+            "flex items-center gap-2 p-2 px-4 rounded-md border w-[35rem] cursor-pointer mt-[7rem]",
+            open && "rounded-b-none"
+          )}
         >
-          <ResourceDropdownContent />
-        </PopoverContent>
-      </Popover>
-    </ResourceProvider>
+          Open
+        </div>
+      </PopoverTrigger>
+      <PopoverContent
+        side="bottom"
+        className="w-[35rem] flex flex-col rounded-none -mt-1 border-t-0 h-[30rem] max-h-[30rem] p-0"
+      >
+        <ResourceDropdownContent />
+      </PopoverContent>
+    </Popover>
   );
 };

@@ -1,206 +1,141 @@
 import {
-  FormModeType,
-  type AllResourcesLabelType,
-  type BreadcrumbItemType,
+  onChnageSelectedItemAction,
+  onChangeCurrentViewAction,
+  handleSearchQueryAction,
+  handleAddBreadcrumbAction,
+  handleBreadCrumbClickAction,
+} from "@/features/resourceContent/resourceContentSlice";
+import { useAppDispatch, useAppSelector } from "./useReduxHooks";
+import { useCallback, useEffect } from "react";
+import {
+  onChangeFormMode,
+  toggleOpenFormModal,
+} from "@/features/form/resourceContentFormSlice";
+import type {
+  AllResourcesLabelType,
+  BreadcrumbItemType,
 } from "@/types/DropdownContentType";
-import { useCallback, useEffect, useState } from "react";
-import { useResourceContentService } from "@/services/useResourceContentService";
-import { toast } from "sonner";
-import { toastMessages } from "@/constants/label";
+import {
+  addResourceContentAction,
+  deleteResourceContentAction,
+  getAllResourceContentAction,
+  updateResourceContentAction,
+} from "@/features/resourceContent/resourceContentThunks";
+import type { AddResourceSchema } from "@/schema/addResourceSchema";
 
 export const useResourceContent = () => {
-  const [formMode, setFormMode] = useState<FormModeType>(FormModeType.CREATE);
   const {
-    getAllResourceContent,
-    deleteResourceContent,
-    updateResourceContent,
-  } = useResourceContentService();
-  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItemType[]>([
-    { title: "All Resources", id: "root" },
-  ]);
-  const [currentView, setCurrentView] = useState("root");
-  const [displayContent, setDisplayContent] = useState<AllResourcesLabelType[]>(
-    []
+    resourceContent,
+    isLoading,
+    error,
+    selectedItem,
+    displayContent,
+    searchQuery,
+    currentView,
+    breadCrumb,
+  } = useAppSelector((state) => state.resourceContent);
+  const { formMode, openFormModal, isEdit } = useAppSelector(
+    (state) => state.form
   );
-  const [openFormModal, setOpenFormModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const [selectedItem, setSelectedItem] = useState<string[] | null>(null);
+  const dispatch = useAppDispatch();
 
-  const _onOpenFormModal = useCallback((open: boolean) => {
-    setOpenFormModal(open);
-  }, []);
-
-  const clearSearch = useCallback(() => {
-    setSearchQuery("");
-  }, []);
+  const handleViewChange = useCallback(
+    (newView: string) => {
+      dispatch(onChangeCurrentViewAction(newView));
+    },
+    [dispatch]
+  );
 
   const handleSearch = useCallback(
-    (query: string, contentToSearch: AllResourcesLabelType[]) => {
-      if (!query.trim()) {
-        clearSearch();
-        return;
-      }
-
-      const lowerCaseQuery = query.toLowerCase();
-
-      const filteredContent = contentToSearch?.reduce<AllResourcesLabelType[]>(
-        (result, item) => {
-          // Check if the heading matches
-          const headingMatches = item.heading
-            .toLowerCase()
-            .includes(lowerCaseQuery);
-
-          // Filter nested content that matches the query
-          const matchingNestedContent = item.nestedContent.filter(
-            (nestedItem) =>
-              nestedItem.title.toLowerCase().includes(lowerCaseQuery)
-          );
-
-          // If either the heading matches or there are matching nested items, include this section
-          if (headingMatches || matchingNestedContent?.length > 0) {
-            // Create a new item with only the matching nested content
-            const newItem = {
-              ...item,
-              nestedContent: headingMatches
-                ? item.nestedContent
-                : matchingNestedContent,
-            };
-
-            result.push(newItem);
-          }
-
-          return result;
-        },
-        []
-      );
-
-      setSearchQuery(query);
-      setDisplayContent(filteredContent);
+    (query: string) => {
+      dispatch(handleSearchQueryAction(query));
     },
-    [clearSearch]
+    [dispatch]
   );
 
-  const fetchResources = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const allResources = await getAllResourceContent();
+  const handleDeleteResource = useCallback(() => {
+    dispatch(deleteResourceContentAction());
+  }, [dispatch]);
 
-      const filteredContent: AllResourcesLabelType[] =
-        allResources.filter((resource) => resource.parentId === currentView) ||
-        [];
+  const handleAddBreadcrumb = useCallback(
+    (newBreadcrumb: BreadcrumbItemType) => {
+      dispatch(handleAddBreadcrumbAction(newBreadcrumb));
+    },
+    [dispatch]
+  );
 
-      setDisplayContent(filteredContent);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("Failed to fetch resources")
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentView]);
+  const handleSelectedItems = useCallback(
+    (items: string[]) => {
+      dispatch(onChnageSelectedItemAction(items));
+    },
+    [dispatch]
+  );
+
+  const handleBreadcrumbClick = useCallback(
+    (breadcrumbIndex: number) => {
+      dispatch(handleBreadCrumbClickAction(breadcrumbIndex));
+    },
+    [dispatch]
+  );
+
+  const handleFormModeChange = useCallback(
+    (mode: string) => {
+      dispatch(onChangeFormMode(mode));
+    },
+    [dispatch]
+  );
+
+  const fetchResources = useCallback(() => {
+    dispatch(getAllResourceContentAction());
+  }, [dispatch]);
+
+  const addResourceContent = useCallback(
+    (resource: AllResourcesLabelType) => {
+      dispatch(addResourceContentAction(resource));
+    },
+    [dispatch]
+  );
+
+  const updateResourceContent = useCallback(
+    (resource: AddResourceSchema) => {
+      dispatch(updateResourceContentAction(resource));
+    },
+    [dispatch]
+  );
+
+  const handleOpenFormModal = useCallback(
+    (isOpen: boolean) => {
+      dispatch(toggleOpenFormModal(isOpen));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     fetchResources();
-  }, [currentView]);
-
-  useEffect(() => {
-    if (searchQuery) {
-      handleSearch(searchQuery, displayContent);
-    }
-  }, [searchQuery]);
-
-  const handleAddBreadcrumb = useCallback((item: BreadcrumbItemType) => {
-    setBreadcrumbs((prev) => {
-      // Check if this item already exists in the breadcrumbs
-      const existingIndex = prev.findIndex((crumb) => crumb.id === item.id);
-
-      if (existingIndex !== -1) {
-        // If it exists, truncate the array up to this item
-        return prev.slice(0, existingIndex + 1);
-      } else {
-        // Otherwise add it to the end
-        return [...prev, item];
-      }
-    });
-    setCurrentView(item.id);
-    // Clear any active search when navigating
-    setSearchQuery("");
   }, []);
 
-  const handleBreadcrumbClick = useCallback(
-    (index: number) => {
-      const item = breadcrumbs[index];
-      setBreadcrumbs((prev) => prev.slice(0, index + 1));
-      setCurrentView(item.id);
-      // Clear any active search when navigating via breadcrumb
-      setSearchQuery("");
-    },
-    [breadcrumbs]
-  );
-
-  const handleDeleteResource = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      if (!selectedItem) {
-        throw new Error("No item selected");
-      }
-      const [itemId, nestedItemId] = selectedItem || [];
-      const itemToDelete = displayContent.find((item) => item.id === itemId);
-      const nestedContent =
-        itemToDelete?.nestedContent.filter(
-          (nestedItem) => nestedItem.id !== nestedItemId
-        ) || [];
-      await updateResourceContent({
-        id: itemToDelete?.id || "",
-        parentId: itemToDelete?.parentId || "",
-        heading: itemToDelete?.heading || "",
-        nestedContent,
-      });
-      // delete the nested item
-      await deleteResourceContent(nestedItemId);
-      toast.success(toastMessages.deleteResourceSuccess, {
-        position: "top-center",
-      });
-      fetchResources();
-    } catch (error) {
-      console.error("Error deleting resource content:", error);
-      toast.error(toastMessages.deleteResourceError, {
-        position: "top-center",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    selectedItem,
-    deleteResourceContent,
-    displayContent,
-    updateResourceContent,
-    fetchResources,
-  ]);
-
   return {
-    breadcrumbs,
+    isEdit,
+    resourceContent,
+    searchQuery,
+    breadCrumb,
     currentView,
     handleAddBreadcrumb,
     handleBreadcrumbClick,
     displayContent,
     handleSearch,
-    searchQuery,
-    clearSearch,
-    setSearchQuery,
     fetchResources,
+    handleFormModeChange,
+    handleViewChange,
     isLoading,
-    setIsLoading,
     error,
-    _onOpenFormModal,
     openFormModal,
+    handleOpenFormModal,
     formMode,
-    setFormMode,
     selectedItem,
-    setSelectedItem,
+    handleSelectedItems,
     handleDeleteResource,
+    addResourceContent,
+    updateResourceContent,
   };
 };

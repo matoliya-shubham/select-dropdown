@@ -1,4 +1,4 @@
-import { SelectDropdown } from "./SelectDropdown";
+import { SelectDropdown } from "./components/SelectDropdown";
 import { Toaster } from "@/components/ui/sonner";
 
 function App() {

@@ -4,11 +4,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChevronRight, Info, PencilLine, Trash } from "lucide-react";
-import { useResourceContext } from "@/hooks/useResourceContext";
 import { IconMap } from "@/constants/label";
 import { FormModeType } from "@/types/DropdownContentType";
 import { WarningAlertDialog } from "./WarningAlertDialog";
 import { useState } from "react";
+import { useResourceContent } from "@/hooks/useResourceContent";
 
 export const ResourceContent = () => {
   const [open, setOpen] = useState(false);
@@ -17,11 +17,11 @@ export const ResourceContent = () => {
     displayContent,
     isLoading,
     error,
-    setFormMode,
-    _onOpenFormModal,
-    setSelectedItem,
+    handleFormModeChange,
+    handleOpenFormModal,
+    handleSelectedItems,
     handleDeleteResource,
-  } = useResourceContext();
+  } = useResourceContent();
   if (!displayContent || displayContent.length === 0) {
     return (
       <div className="p-4">
@@ -33,7 +33,7 @@ export const ResourceContent = () => {
   if (error) {
     return (
       <div className="p-4">
-        <p>{error.message}</p>
+        <p>{error}</p>
       </div>
     );
   }
@@ -78,16 +78,16 @@ export const ResourceContent = () => {
                       <PencilLine
                         onClick={(e) => {
                           e.stopPropagation();
-                          setFormMode(FormModeType.EDIT);
-                          setSelectedItem([item.id, nestedItem.id]);
-                          _onOpenFormModal(true);
+                          handleFormModeChange(FormModeType.EDIT);
+                          handleSelectedItems([item.id, nestedItem.id]);
+                          handleOpenFormModal(true);
                         }}
                         className="size-4 text-gray-700 cursor-pointer hidden group-hover:block hover:text-blue-700"
                       />
                       <Trash
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedItem([item.id, nestedItem.id]);
+                          handleSelectedItems([item.id, nestedItem.id]);
                           setOpen(true);
                         }}
                         className="size-4 text-gray-700 cursor-pointer hidden group-hover:block hover:text-red-700"
