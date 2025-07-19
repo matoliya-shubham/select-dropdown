@@ -15,6 +15,29 @@ A modern, customizable dropdown component built using **React**, **Vite**, and *
 
 ---
 
+## 🧩 Features Description
+
+- 🔽 **Custom Select Dropdown**
+  - Fully customizable options
+  - Integrated search functionality
+  - Keyboard accessible and responsive
+  - Styled using Tailwind and shadcn/ui
+
+- 🔍 **Search Functionality**
+  - Type to filter dropdown options in real-time
+  - Works with static or Firestore-based dynamic data
+
+- 📝 **Form Modal for CRUD Operations**
+  - Add, update, and delete items via modal
+  - Built with accessible UI components from shadcn/ui
+  - Integrated with Redux Toolkit for state management
+  - Uses Firestore for persistent storage (optional)
+
+- ⚡ **Fast & Modern Stack**
+  - React + Vite for fast dev experience
+  - Tailwind CSS for styling
+  - Redux Toolkit + Firestore for data flow and persistence
+
 ## 🛠 Tech Stack
 
 - [React](https://reactjs.org/)
