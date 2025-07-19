@@ -17,8 +17,6 @@ A modern, customizable dropdown component built using **React**, **Vite**, and *
 
 ## 🛠 Tech Stack
 
-## 🛠 Tech Stack
-
 - [React](https://reactjs.org/)
 - [Vite](https://vitejs.dev/)
 - [Redux Toolkit](https://redux-toolkit.js.org/)
