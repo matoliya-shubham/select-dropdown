@@ -9,7 +9,8 @@ import { ActionType, FormModeType } from "@/types/DropdownContentType";
 import { WarningAlertDialog } from "./WarningAlertDialog";
 import { useState } from "react";
 import { useResourceContent } from "@/hooks/useResourceContent";
-
+import { ResourceContentSkeleton } from "../Skeleton/ResourceContentSkeleton";
+import ErrorImage from "@/assets/error.png";
 export const ResourceContent = () => {
   const [open, setOpen] = useState(false);
   const {
@@ -24,18 +25,16 @@ export const ResourceContent = () => {
     handleAddRemoveResource,
   } = useResourceContent();
 
+  if (isLoading) {
+    return <ResourceContentSkeleton />;
+  }
   if (error) {
     return (
-      <div className="p-4">
-        <p>{error}</p>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="p-4">
-        <p>Loading...</p>
+      <div className="flex items-center flex-col  justify-center w-full h-[23rem]">
+        <div>
+          <img src={ErrorImage} alt="Error" className="w-16 h-16 mb-4" />
+        </div>
+        <h1 className="font-semibold text-xl">Something went Wrong!</h1>
       </div>
     );
   }
