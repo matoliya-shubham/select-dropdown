@@ -22,6 +22,7 @@ import {
 import { IconMap } from "@/constants/label";
 import { FormModeType } from "@/types/DropdownContentType";
 import { useResourceContent } from "@/hooks/useResourceContent";
+import { useCallback } from "react";
 
 export const AddResourceForm = () => {
   const {
@@ -31,6 +32,7 @@ export const AddResourceForm = () => {
     formMode,
     handleOpenFormModal,
     isLoading,
+    isEdit,
     updateResourceContent,
   } = useResourceContent();
 
@@ -50,14 +52,17 @@ export const AddResourceForm = () => {
     defaultValues,
   });
 
-  const handleSubmit = async (data: AddResourceSchema) => {
-    try {
-      updateResourceContent(data);
-      handleOpenFormModal(false);
-    } catch (error) {
-      console.error("Error adding resource:", error);
-    }
-  };
+  const handleSubmit = useCallback(
+    async (data: AddResourceSchema) => {
+      try {
+        updateResourceContent(data);
+        handleOpenFormModal(false);
+      } catch (error) {
+        console.error("Error adding resource:", error);
+      }
+    },
+    [updateResourceContent, handleOpenFormModal]
+  );
 
   return (
     <div>
@@ -154,11 +159,7 @@ export const AddResourceForm = () => {
               className="cursor-pointer"
               disabled={isLoading}
             >
-              {isLoading
-                ? "Saving..."
-                : formMode === FormModeType.EDIT
-                ? "Create"
-                : "Update"}
+              {isLoading ? "Saving..." : isEdit ? "Update" : "Create"}
             </Button>
           </div>
         </form>

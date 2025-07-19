@@ -5,10 +5,7 @@ import {
   updateResourceContentAction,
   deleteResourceContentAction,
 } from "./resourceContentThunks";
-import {
-  onChangeCurrentViewAction,
-  type ResourceContentStateType,
-} from "./resourceContentSlice";
+import { type ResourceContentStateType } from "./resourceContentSlice";
 
 export const resourceContentExtraReducer = (
   builder: ActionReducerMapBuilder<ResourceContentStateType>
@@ -23,7 +20,10 @@ export const resourceContentExtraReducer = (
     .addCase(getAllResourceContentAction.fulfilled, (state, action) => {
       state.isLoading = false;
       state.resourceContent = action.payload;
-      onChangeCurrentViewAction(state.currentView);
+      state.displayContent =
+        state.resourceContent.filter(
+          (item) => item.parentId === state.currentView
+        ) || [];
     })
     .addCase(getAllResourceContentAction.rejected, (state, action) => {
       state.isLoading = false;
@@ -37,7 +37,10 @@ export const resourceContentExtraReducer = (
     .addCase(addResourceContentAction.fulfilled, (state, action) => {
       state.isLoading = false;
       state.resourceContent = action.payload;
-      onChangeCurrentViewAction(state.currentView);
+      state.displayContent =
+        state.resourceContent.filter(
+          (item) => item.parentId === state.currentView
+        ) || [];
     })
     .addCase(addResourceContentAction.rejected, (state, action) => {
       state.isLoading = false;
@@ -51,7 +54,10 @@ export const resourceContentExtraReducer = (
     .addCase(updateResourceContentAction.fulfilled, (state, action) => {
       state.isLoading = false;
       state.resourceContent = action.payload;
-      onChangeCurrentViewAction(state.currentView);
+      state.displayContent =
+        state.resourceContent.filter(
+          (item) => item.parentId === state.currentView
+        ) || [];
     })
     .addCase(updateResourceContentAction.rejected, (state, action) => {
       state.isLoading = false;
@@ -65,7 +71,10 @@ export const resourceContentExtraReducer = (
     .addCase(deleteResourceContentAction.fulfilled, (state, action) => {
       state.isLoading = false;
       state.resourceContent = action.payload;
-      onChangeCurrentViewAction(state.currentView);
+      state.displayContent =
+        state.resourceContent.filter(
+          (item) => item.parentId === state.currentView
+        ) || [];
     })
     .addCase(deleteResourceContentAction.rejected, (state, action) => {
       state.isLoading = false;

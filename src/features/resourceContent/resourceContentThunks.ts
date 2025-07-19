@@ -20,9 +20,6 @@ export const getAllResourceContentAction = createAsyncThunk(
       if (!responce) {
         throw new Error("Failed to fetch resource content");
       }
-      toast.success(toastMessages.addResourceError, {
-        position: "top-center",
-      });
       return responce;
     } catch (error) {
       console.error("Error fetching resource content:", error);
@@ -91,9 +88,14 @@ export const updateResourceContentAction = createAsyncThunk<
       };
       await updateResourceContentService(itemToUpdate);
 
-      toast.success(toastMessages.updateResourceSuccess, {
-        position: "top-center",
-      });
+      toast.success(
+        isEdit
+          ? toastMessages.updateResourceSuccess
+          : toastMessages.addResourceSuccess,
+        {
+          position: "top-center",
+        }
+      );
       return fulfillWithValue(
         resourceContent.map((item) => {
           if (item.id === itemToUpdate.id) {

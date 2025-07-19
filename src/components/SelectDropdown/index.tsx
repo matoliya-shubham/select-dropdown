@@ -15,7 +15,7 @@ import { useResourceContent } from "@/hooks/useResourceContent";
 
 // Wrapper component to use context
 const ResourceDropdownContent = () => {
-  const { searchQuery, handleSearch } = useResourceContent();
+  const { searchQuery, handleSearch, isEdit } = useResourceContent();
 
   return (
     <>
@@ -35,8 +35,8 @@ const ResourceDropdownContent = () => {
             <PlusIcon className="size-4" /> Add Resource
           </div>
         }
-        heading="Add Resource"
-        description="Add a new resource"
+        heading={isEdit ? "Update Resource" : "Add Resource"}
+        description={isEdit ? "Update a Resource" : "Add a new Resource"}
       />
     </>
   );
