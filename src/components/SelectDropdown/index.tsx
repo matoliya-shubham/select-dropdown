@@ -12,7 +12,6 @@ import { PlusIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ResourceContent } from "./ResourceContent";
 import { useResourceContent } from "@/hooks/useResourceContent";
-import { Form } from "react-hook-form";
 import { FormModeType } from "@/types/DropdownContentType";
 
 // Wrapper component to use context
