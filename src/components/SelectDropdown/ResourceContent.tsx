@@ -22,13 +22,6 @@ export const ResourceContent = () => {
     handleSelectedItems,
     handleDeleteResource,
   } = useResourceContent();
-  if (!displayContent || displayContent.length === 0) {
-    return (
-      <div className="p-4">
-        <p>No content available for this view.</p>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -45,6 +38,15 @@ export const ResourceContent = () => {
       </div>
     );
   }
+  // If no content is available, show a message
+  if (!displayContent || displayContent.length === 0) {
+    return (
+      <div className="p-4">
+        <p>No content available for this view.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col">
       {displayContent.map((item) => {
