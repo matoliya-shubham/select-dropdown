@@ -65,11 +65,11 @@ export const SelectDropdown = () => {
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "flex items-center gap-2 p-2 px-4 rounded-md border w-[35rem] cursor-pointer mt-[7rem]",
+            "flex items-center gap-2 p-2 px-4 rounded-md border sm:w-[35rem] xs:w-[33rem] cursor-pointer mt-[7rem]",
             open && "rounded-b-none"
           )}
         >
-          Open
+          Open Resource Dropdown
         </div>
       </PopoverTrigger>
       <PopoverContent
