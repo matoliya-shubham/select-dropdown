@@ -12,10 +12,18 @@ import { PlusIcon } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ResourceContent } from "./ResourceContent";
 import { useResourceContent } from "@/hooks/useResourceContent";
+import { Form } from "react-hook-form";
+import { FormModeType } from "@/types/DropdownContentType";
 
 // Wrapper component to use context
 const ResourceDropdownContent = () => {
-  const { searchQuery, handleSearch, isEdit } = useResourceContent();
+  const {
+    searchQuery,
+    handleSearch,
+    isEdit,
+    handleFormModeChange,
+    handleOpenFormModal,
+  } = useResourceContent();
 
   return (
     <>
@@ -31,7 +39,14 @@ const ResourceDropdownContent = () => {
       </ScrollArea>
       <AddResourceModal
         title={
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2"
+            onClick={() => {
+              handleFormModeChange(FormModeType.CREATE);
+              handleSearch("");
+              handleOpenFormModal(true);
+            }}
+          >
             <PlusIcon className="size-4" /> Add Resource
           </div>
         }

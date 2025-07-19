@@ -71,7 +71,10 @@ export const updateResourceContentAction = createAsyncThunk<
         iconName: formData.icon,
         tooltipContent: "",
       };
-      const itemToAdd = displayContent.find((item) => item.id === itemId);
+      const itemIdToUpdate = isEdit ? itemId : formData.category;
+      const itemToAdd = displayContent.find(
+        (item) => item.id === itemIdToUpdate
+      );
       const nestedContent = isEdit
         ? itemToAdd?.nestedContent.map((nestedItem) => {
             if (nestedItem.id === nestedItemId) {
