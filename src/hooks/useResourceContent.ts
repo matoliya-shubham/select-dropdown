@@ -4,6 +4,7 @@ import {
   handleSearchQueryAction,
   handleAddBreadcrumbAction,
   handleBreadCrumbClickAction,
+  handleAddRemoveSelectedResourcesAction,
 } from "@/features/resourceContent/resourceContentSlice";
 import { useAppDispatch, useAppSelector } from "./useReduxHooks";
 import { useCallback, useEffect } from "react";
@@ -12,6 +13,7 @@ import {
   toggleOpenFormModal,
 } from "@/features/form/resourceContentFormSlice";
 import type {
+  AddedResourceType,
   AllResourcesLabelType,
   BreadcrumbItemType,
 } from "@/types/DropdownContentType";
@@ -33,6 +35,7 @@ export const useResourceContent = () => {
     searchQuery,
     currentView,
     breadCrumb,
+    selectedResources,
   } = useAppSelector((state) => state.resourceContent);
   const { formMode, openFormModal, isEdit } = useAppSelector(
     (state) => state.form
@@ -110,18 +113,29 @@ export const useResourceContent = () => {
     [dispatch]
   );
 
+  const handleAddRemoveResource = useCallback(
+    (resource: AddedResourceType, actionType: string) => {
+      dispatch(
+        handleAddRemoveSelectedResourcesAction({ resource, actionType })
+      );
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     fetchResources();
   }, []);
 
   return {
     isEdit,
+    selectedResources,
     resourceContent,
     searchQuery,
     breadCrumb,
     currentView,
     handleAddBreadcrumb,
     handleBreadcrumbClick,
+    handleAddRemoveResource,
     displayContent,
     handleSearch,
     fetchResources,

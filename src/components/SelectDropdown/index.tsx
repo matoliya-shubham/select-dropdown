@@ -8,11 +8,12 @@ import { useState } from "react";
 import { RichDropdownMenuSearch } from "./ResourceContentSearch";
 import { ResourceBreadCrumb } from "./ResourceBreadCrumb";
 import { AddResourceModal } from "./AddResourceModal";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ResourceContent } from "./ResourceContent";
 import { useResourceContent } from "@/hooks/useResourceContent";
-import { FormModeType } from "@/types/DropdownContentType";
+import { ActionType, FormModeType } from "@/types/DropdownContentType";
+import { Badge } from "@/components/ui/badge";
 
 // Wrapper component to use context
 const ResourceDropdownContent = () => {
@@ -59,7 +60,7 @@ const ResourceDropdownContent = () => {
 export const SelectDropdown = () => {
   const [open, setOpen] = useState(false);
   const _onOpenChange = (open: boolean) => setOpen(open);
-
+  const { handleAddRemoveResource, selectedResources } = useResourceContent();
   return (
     <Popover open={open} onOpenChange={_onOpenChange}>
       <PopoverTrigger asChild>
@@ -69,7 +70,25 @@ export const SelectDropdown = () => {
             open && "rounded-b-none"
           )}
         >
-          Open Resource Dropdown
+          {selectedResources.length > 0 ? (
+            <div className="flex items-center gap-1 flex-wrap">
+              {selectedResources.map((resource) => (
+                <Badge
+                  key={resource.id}
+                  variant="secondary"
+                  className="cursor-pointer flex items-center gap-1 hover:bg-blue-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddRemoveResource(resource, ActionType.DELETE);
+                  }}
+                >
+                  {resource.title} <X className="size-3 " />
+                </Badge>
+              ))}
+            </div>
+          ) : (
+            <span className="text-muted-foreground">Select Resources</span>
+          )}
         </div>
       </PopoverTrigger>
       <PopoverContent

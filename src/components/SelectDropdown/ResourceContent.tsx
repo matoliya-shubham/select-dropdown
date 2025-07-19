@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ChevronRight, Info, PencilLine, Trash } from "lucide-react";
 import { IconMap } from "@/constants/label";
-import { FormModeType } from "@/types/DropdownContentType";
+import { ActionType, FormModeType } from "@/types/DropdownContentType";
 import { WarningAlertDialog } from "./WarningAlertDialog";
 import { useState } from "react";
 import { useResourceContent } from "@/hooks/useResourceContent";
@@ -21,6 +21,7 @@ export const ResourceContent = () => {
     handleOpenFormModal,
     handleSelectedItems,
     handleDeleteResource,
+    handleAddRemoveResource,
   } = useResourceContent();
 
   if (error) {
@@ -69,6 +70,14 @@ export const ResourceContent = () => {
                           title: nestedItem.title,
                           id: nestedItem.id,
                         });
+                      } else {
+                        handleAddRemoveResource(
+                          {
+                            title: nestedItem.title,
+                            id: nestedItem.id,
+                          },
+                          ActionType.ADD
+                        );
                       }
                     }}
                   >

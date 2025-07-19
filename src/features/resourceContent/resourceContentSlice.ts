@@ -1,9 +1,12 @@
-import type {
-  AllResourcesLabelType,
-  BreadcrumbItemType,
+import {
+  ActionType,
+  type AddedResourceType,
+  type AllResourcesLabelType,
+  type BreadcrumbItemType,
 } from "@/types/DropdownContentType";
 import { createSlice } from "@reduxjs/toolkit";
 import { resourceContentExtraReducer } from "./resourceContentExtraReducer";
+import { toast } from "sonner";
 
 export type ResourceContentStateType = {
   resourceContent: AllResourcesLabelType[];
@@ -11,6 +14,7 @@ export type ResourceContentStateType = {
   error: string | null;
   selectedItem: string[] | null;
   displayContent: AllResourcesLabelType[];
+  selectedResources: AddedResourceType[];
   searchQuery: string;
   currentView: string;
   breadCrumb: BreadcrumbItemType[];
@@ -20,6 +24,7 @@ const resourceContentInitialState: ResourceContentStateType = {
   isLoading: false,
   error: null,
   selectedItem: null,
+  selectedResources: [],
   displayContent: [],
   searchQuery: "",
   currentView: "root",
@@ -43,6 +48,24 @@ const resourceContentSlice = createSlice({
         state.resourceContent.filter(
           (item) => item.parentId === action.payload
         ) || [];
+    },
+    handleAddRemoveSelectedResourcesAction(state, action) {
+      const { resource, actionType } = action.payload;
+      const itemExist = state.selectedResources.some(
+        (item) => item.id === resource.id
+      );
+
+      if (itemExist && actionType === ActionType.DELETE) {
+        state.selectedResources = state.selectedResources.filter(
+          (item) => item.id !== resource.id
+        );
+      } else if (!itemExist) {
+        state.selectedResources.push(resource);
+      } else if (actionType === ActionType.ADD && itemExist) {
+        toast.success(`Resource ${resource.title} already Selected`, {
+          position: "top-center",
+        });
+      }
     },
     handleSearchQueryAction(state, action) {
       state.searchQuery = action.payload;
@@ -125,5 +148,6 @@ export const {
   handleSearchQueryAction,
   handleAddBreadcrumbAction,
   handleBreadCrumbClickAction,
+  handleAddRemoveSelectedResourcesAction,
 } = resourceContentSlice.actions;
 export default resourceContentSlice.reducer;
